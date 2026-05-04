@@ -1,93 +1,110 @@
-# Tugas Praktikum 9
+# 📱 Notes App V3 - Tugas Praktikum 8
 
-#### Nama : Muhamad Rafi Ilham
-#### NIM  : 123140173
-#### Kelas: PAM RB
+Aplikasi pencatatan (Notes App) modern yang dibangun menggunakan **Kotlin Multiplatform (KMP)**. Project ini difokuskan pada implementasi fitur spesifik platform (Android & iOS) menggunakan pola `expect/actual` dan manajemen dependensi menggunakan **Koin**.
 
-## Deskripsi
-Pengembangan aplikasi **CaptionGenerator**, yaitu aplikasi pencatat pengeluaran pribadi berbasis **Kotlin Multiplatform** yang terintegrasi dengan **Gemini API**.
+---
 
-Aplikasi ini digunakan untuk mencatat pengeluaran berdasarkan nominal, kategori, dan catatan. Data pengeluaran kemudian dihitung secara lokal oleh aplikasi untuk mendapatkan total pengeluaran, jumlah transaksi, dan kategori pengeluaran terbesar.
+## 👨‍💻 Identitas Mahasiswa
 
-Fitur AI digunakan untuk memberikan analisis pengeluaran dan saran penghematan berdasarkan data yang dimasukkan pengguna.
+* **Nama:** Gian Ivander
+* **NIM:** 123140040
+* **Kelas:** Pengembangan Aplikasi Mobile RA 
 
-## Fitur Utama
-- Menambahkan data pengeluaran berdasarkan nominal, kategori, dan catatan
-- Menampilkan daftar pengeluaran
-- Menghitung total pengeluaran secara lokal
-- Menampilkan jumlah transaksi dan kategori pengeluaran terbesar
-- Mengintegrasikan **Gemini API** untuk analisis pengeluaran
-- Menggunakan prompt yang dirancang untuk asisten keuangan mahasiswa
-- Menampilkan loading state saat AI memproses data
-- Menangani error seperti API key tidak valid, timeout, model tidak ditemukan, dan quota/rate limit
+---
 
-##  AI Integration
-CaptionGenerator menggunakan **Gemini API** untuk menganalisis data pengeluaran pengguna.
+## 🚀 Fitur yang Diimplementasikan (Week 8)
 
-Alur AI pada aplikasi:
-1. Pengguna memasukkan data pengeluaran
-2. Aplikasi menghitung ringkasan pengeluaran secara lokal
-3. Ringkasan dan detail transaksi dikirim ke Gemini API
-4. Gemini memberikan analisis dan saran penghematan
-5. Hasil analisis ditampilkan pada aplikasi
+### 💉 Dependency Injection (Koin)
+Manajemen dependensi yang efisien di seluruh platform target:
+* **Database & Repository**: Diinjeksi secara otomatis ke ViewModel.
+* **Platform Services**: Injeksi `DeviceInfo` dan `NetworkMonitor` menggunakan modul spesifik platform.
 
-Perhitungan angka seperti total pengeluaran dan kategori terbesar dilakukan oleh aplikasi, bukan oleh AI, agar hasil lebih akurat.
+### 🧠 expect/actual Implementation
+Mengakses API native sambil tetap mempertahankan satu codebase di `commonMain`:
+* **DeviceInfo**: Mengambil nama perangkat, manufacturer, dan versi OS.
+* **Real-time Battery Tracking**: Memantau level baterai dan status pengisian daya (Charging/Not Charging) secara reaktif.
+* **NetworkMonitor**: Mendeteksi status koneksi internet menggunakan listener native.
 
-## Prompt Engineering
-Prompt dirancang dengan beberapa bagian utama:
-- **Role**: Gemini berperan sebagai asisten keuangan pribadi untuk mahasiswa
-- **Task**: Menganalisis data pengeluaran dan memberi saran hemat
-- **Rules**:
-  - Gunakan Bahasa Indonesia
-  - Jangan mengarang angka di luar data yang diberikan
-  - Jangan memberikan rekomendasi produk keuangan tertentu
-  - Fokus pada pengelolaan pengeluaran harian
-- **Format Output**:
-  1. Ringkasan Kondisi Keuangan
-  2. Pengeluaran Terbesar
-  3. Pola yang Terlihat
-  4. Risiko Jika Dibiarkan
-  5. Saran Penghematan
-  6. Target Minggu Depan
- 
-## Error Handling dan Fallback Mode
-Aplikasi menangani beberapa kondisi error, seperti:
-- API key kosong atau tidak valid
-- Prompt kosong
-- Request Gemini tidak valid
-- Model Gemini tidak ditemukan
-- Gemini API terkena quota atau rate limit
-- Request timeout
-- Gemini tidak mengembalikan respons
-- Belum ada data pengeluaran untuk dianalisis
-- Nominal pengeluaran tidak valid
+### 📡 Network Status Indicator
+* **Reactive UI**: Menggunakan Kotlin Coroutines `Flow` untuk mengamati perubahan koneksi.
+* **Smart Notifications**: 
+    * 🔴 Bar merah muncul saat perangkat **Offline**.
+    * 🟢 Notifikasi hijau "Back Online" muncul selama 3 detik saat koneksi kembali.
 
-Jika Gemini API tidak tersedia karena quota atau rate limit, aplikasi tetap memberikan feedback melalui fallback analysis lokal berdasarkan data pengeluaran yang sudah dihitung aplikasi.
+### ⚙️ Enhanced Settings Screen
+* **Device Info Display**: Bagian khusus di layar Settings untuk melihat detail perangkat dan status baterai secara live.
 
-## Cara Menjalankan (Android Studio)
-1. Pilih branch **week9**
-2. Clone / download repository:
-   - `https://github.com/raapstronaut/Praktikum-PAM.git`
-3. Buka folder project tugas praktikum 9 menggunakan Android Studio.
-4. Tunggu proses **Gradle Sync** sampai selesai.
-5. Jalankan aplikasi dengan menekan tombol **Run**.
-6. Pilih emulator/device Android, lalu aplikasi akan terbuka.
+---
 
-## Screenshot Aplikasi
+## 🏗️ Architecture Overview
 
-<table>
-  <tr>
-    <td align="center"><b>1. Input Expense</b></td>
-    <td align="center"><b>2. Expense Summary</b></td>
-    <td align="center"><b>3. Loading State</b></td>
-    <td align="center"><b>4. AI Analysis</b></td>
-    <td align="center"><b>5. Error Handling</b></td>
-  </tr>
-  <tr>
-    <td><img src="https://github.com/user-attachments/assets/44709b46-efdb-462d-a7ae-2d82b1b23a9f" width="220" /></td>
-    <td><img src="https://github.com/user-attachments/assets/f9a9fba0-5cd7-4d7a-83e9-3fc1d1efd5f3" width="220"/></td>
-    <td><img src="https://github.com/user-attachments/assets/fa3cf673-18e0-4674-bb5b-10101b45b26c" width="220"/></td>
-    <td><img src="https://github.com/user-attachments/assets/e89d5f68-f2d2-43ac-b399-779b5eccb6a6" width="220"/></td>
-    <td><img src="https://github.com/user-attachments/assets/18608a3d-6d91-4fcf-b6b0-3a08132772bf" width="220"/></td>
-  </tr>
-</table>
+Aplikasi mengikuti pola clean architecture di mana layer UI mengamati state dari ViewModel, yang berinteraksi dengan API platform melalui abstraksi yang dibagikan.
+
+```mermaid
+graph TD
+UI[Compose Multiplatform UI] --> VM[NotesViewModel]
+VM --> Repo[NotesRepository]
+Repo --> PlatformLayer[Platform Layer - expect]
+PlatformLayer --> AndroidAPIs[Android APIs - actual]
+PlatformLayer --> iOSAPIs[iOS APIs - actual]
+```
+
+---
+
+## 💉 Koin Dependency Injection
+
+Koin digunakan untuk mempermudah pengujian dan pemisahan logika platform. Modul disusun menjadi:
+* **commonModule**: Berisi definisi Database, Repository, dan ViewModel.
+* **platformModule**: Berisi implementasi spesifik seperti `DatabaseDriverFactory`, `DeviceInfo`, dan `NetworkMonitor`.
+
+---
+
+## 🧠 Platform-Specific Features
+
+### expect/actual Pattern
+Saya mendefinisikan "apa" (kontrak) di `commonMain` dan "bagaimana" (implementasi) di modul platform:
+1. **DeviceInfo**: Menghubungkan ke `android.os.Build` di Android dan `UIDevice` di iOS.
+2. **NetworkMonitor**: Menggunakan `ConnectivityManager` (Android) dan `NWPathMonitor` (iOS).
+3. **Battery Status**: Diimplementasikan sebagai `Flow` untuk memberikan pembaruan real-time ke UI tanpa refresh halaman.
+
+---
+
+## 📸 Screenshots
+
+|       Device Info (Settings)        |           Network Offline           |            Back Online            |
+|:-----------------------------------:|:-----------------------------------:|:---------------------------------:|
+| ![Setting](Screenshot/Setting.jpeg) | ![Offline](Screenshot/Offline.jpeg) | ![Online](Screenshot/Online.jpeg) |
+
+---
+
+## 🎥 Demo Video
+
+https://github.com/user-attachments/assets/0e838d04-7b1c-48e4-9234-0a88300f6553
+
+---
+
+## ⚙️ Setup & Run
+
+1. **Clone repository**:
+   ```bash
+   git clone https://github.com/15-040-GianIvander/9_123140040.git
+   ```
+2. Buka project di **Android Studio**.
+3. Tunggu Gradle Sync selesai.
+4. Pilih target `composeApp` dan jalankan pada **Android Emulator/Device**.
+
+---
+
+## 📚 Tech Stack
+
+* **Kotlin Multiplatform (KMP)**: Shared codebase untuk Android & iOS
+* **Compose Multiplatform**: UI framework yang konsisten di semua platform
+* **Koin**: Dependency Injection Framework
+* **SQLite**: Database lokal (via SQLDelight)
+* **Kotlin Coroutines**: Asynchronous programming & reactive updates
+
+---
+
+## 📝 Notes
+
+Proyek ini adalah bagian dari Tugas Praktikum 8 untuk kelas Pengembangan Aplikasi Mobile. Fokus implementasi adalah pada pemahaman deep tentang Kotlin Multiplatform Architecture dan platform-specific feature integration menggunakan pola `expect/actual`.
