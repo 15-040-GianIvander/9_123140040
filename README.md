@@ -93,13 +93,13 @@ Mengakses API native untuk image picker:
 
 |       Main Screen        |           With Image Input           |            Generated Captions            |
 |:------------------------:|:-----------------------------------:|:----------------------------------------:|
-| ![Main](Screenshot/main.jpeg) | ![Input](Screenshot/input.jpeg) | ![Result](Screenshot/result.jpeg) |
+| <img width="720" height="1600" alt="WhatsApp Image 2026-05-04 at 15 40 37" src="https://github.com/user-attachments/assets/af19c74c-3fc1-4ca7-995c-b2d495f5dce7" />| <img width="720" height="1600" alt="WhatsApp Image 2026-05-04 at 15 40 38" src="https://github.com/user-attachments/assets/cec5e4f3-7c9d-4eb5-9f12-1c648074f07a" />| <img width="720" height="1600" alt="WhatsApp Image 2026-05-04 at 15 40 38 (1)" src="https://github.com/user-attachments/assets/4f5fe2ce-153f-43ae-8648-746d11f159a0" /> |
 
 ---
 
 ## 🎥 Demo Video
 
-https://github.com/user-attachments/assets/demo-caption-generator
+https://github.com/user-attachments/assets/b5e0c7da-c131-4d77-9f31-0c15c40480e2
 
 ---
 
