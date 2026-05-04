@@ -1,6 +1,6 @@
-# 📱 Notes App V3 - Tugas Praktikum 8
+# 📱 CaptionGenerator - AI-Powered Social Media Caption Generator
 
-Aplikasi pencatatan (Notes App) modern yang dibangun menggunakan **Kotlin Multiplatform (KMP)**. Project ini difokuskan pada implementasi fitur spesifik platform (Android & iOS) menggunakan pola `expect/actual` dan Dependency Injection dengan Koin.
+Aplikasi generator caption media sosial cerdas yang dibangun menggunakan **Kotlin Multiplatform (KMP)**. Project ini memanfaatkan Google Gemini API untuk menghasilkan caption menarik dengan integrasi gambar opsional.
 
 ---
 
@@ -8,7 +8,7 @@ Aplikasi pencatatan (Notes App) modern yang dibangun menggunakan **Kotlin Multip
 
 * **Nama:** Gian Ivander
 * **NIM:** 123140040
-* **Kelas:** Pengembangan Aplikasi Mobile RA 
+* **Kelas:** Pengembangan Aplikasi Mobile RA
 
 ---
 
@@ -22,82 +22,54 @@ Aplikasi pencatatan (Notes App) modern yang dibangun menggunakan **Kotlin Multip
 ## 🎯 Tujuan Proyek
 
 Proyek ini mendemonstrasikan:
-- Penggunaan Kotlin Multiplatform untuk berbagi kode antar platform
+- Integrasi AI (Google Gemini API) dalam aplikasi mobile
+- Kotlin Multiplatform untuk berbagi kode antar platform
 - Pattern `expect/actual` untuk akses API native
-- Dependency Injection menggunakan Koin
 - Reactive programming dengan Kotlin Coroutines dan Flow
-- Clean Architecture di aplikasi mobile
+- Clean Architecture di aplikasi mobile dengan AI integration
 
 ---
 
-## 🚀 Fitur yang Diimplementasikan (Week 8)
+## 🚀 Fitur yang Diimplementasikan
 
-### 💉 Dependency Injection (Koin)
-Manajemen dependensi yang efisien di seluruh platform target:
-* **Database & Repository**: Diinjeksi secara otomatis ke ViewModel.
-* **Platform Services**: Injeksi `DeviceInfo` dan `NetworkMonitor` menggunakan modul spesifik platform.
-* **Testability**: Memudahkan unit testing dengan mock dependencies.
+### 🤖 AI Caption Generation
+* **Multi-Variant Captions**: Menghasilkan 3 variasi caption (Funny, Professional, Brief)
+* **Image Context**: Dukungan input gambar untuk konteks yang lebih baik
+* **Smart Hashtags**: Rekomendasi hashtag otomatis
+* **Content Evaluation**: Analisis konten dari AI
 
-### 🧠 expect/actual Implementation
-Mengakses API native sambil tetap mempertahankan satu codebase di `commonMain`:
-* **DeviceInfo**: Mengambil nama perangkat, manufacturer, dan versi OS.
-* **Real-time Battery Tracking**: Memantau level baterai dan status pengisian daya (Charging/Not Charging) secara reaktif.
-* **NetworkMonitor**: Mendeteksi status koneksi internet menggunakan listener native.
+### 🖼️ Image Integration
+* **Platform-Specific Image Picker**: Menggunakan expect/actual pattern untuk akses galeri
+* **Base64 Encoding**: Konversi gambar untuk API Gemini
+* **Optional Input**: Caption bisa dihasilkan dengan atau tanpa gambar
 
-### 📡 Network Status Indicator
-* **Reactive UI**: Menggunakan Kotlin Coroutines `Flow` untuk mengamati perubahan koneksi.
-* **Smart Notifications**: 
-    * 🔴 Bar merah muncul saat perangkat **Offline**.
-    * 🟢 Notifikasi hijau "Back Online" muncul selama 3 detik saat koneksi kembali.
+### 📡 Gemini API Integration
+* **Real-time Processing**: Komunikasi langsung dengan Google Gemini API
+* **Error Handling**: Penanganan error untuk API key invalid dan koneksi gagal
+* **Timeout Management**: 60 detik timeout untuk response
+* **Structured Response**: Parsing JSON response ke model data terstruktur
 
-### ⚙️ Enhanced Settings Screen
-* **Device Info Display**: Bagian khusus di layar Settings untuk melihat detail perangkat dan status baterai secara live.
-* **Real-time Updates**: Informasi baterai dan jaringan diperbarui secara otomatis.
+### ⚙️ Enhanced UI/UX
+* **Compose Multiplatform**: UI yang konsisten di Android dan iOS
+* **State Management**: Reactive UI dengan StateFlow
+* **Loading States**: Indikator loading selama pemrosesan AI
+* **Error Display**: Pesan error yang informatif
 
 ---
 
 ## 🏗️ Architecture Overview
 
-Aplikasi mengikuti pola clean architecture di mana layer UI mengamati state dari ViewModel, yang berinteraksi dengan API platform melalui abstraksi yang dibagikan.
+Aplikasi mengikuti pola clean architecture dengan integrasi AI:
 
 ```mermaid
 graph TD
-    UI[Compose Multiplatform UI] --> VM[NotesViewModel]
-    VM --> Repo[NotesRepository]
-    Repo --> DI[Koin Dependency Injection]
-    DI --> CommonModule["Common Module<br/>(Database, Repository)"]
-    DI --> PlatformModule["Platform Module<br/>(expect/actual)"]
-    PlatformModule --> AndroidImpl["Android<br/>(Kotlin)"]
-    PlatformModule --> iOSImpl["iOS<br/>(Swift/Kotlin)"]
-```
-
----
-
-## 💉 Koin Dependency Injection
-
-Koin digunakan untuk mempermudah pengujian dan pemisahan logika platform. Modul disusun menjadi:
-
-### CommonModule
-```
-- DatabaseFactory
-- NotesRepository
-- NotesViewModel
-```
-
-### PlatformModule (Android)
-```
-- DatabaseDriverFactory (Android)
-- DeviceInfo (menggunakan android.os.Build)
-- NetworkMonitor (menggunakan ConnectivityManager)
-- BatteryMonitor
-```
-
-### PlatformModule (iOS)
-```
-- DatabaseDriverFactory (iOS)
-- DeviceInfo (menggunakan UIDevice)
-- NetworkMonitor (menggunakan NWPathMonitor)
-- BatteryMonitor
+    UI[Compose Multiplatform UI] --> VM[CaptionGeneratorViewModel]
+    VM --> Repo[FinanceRepository]
+    Repo --> API[GeminiService]
+    API --> Gemini[Google Gemini API]
+    UI --> ImagePicker[expect/actual ImagePicker]
+    ImagePicker --> AndroidImpl[Android Image Picker]
+    ImagePicker --> iOSImpl[iOS Image Picker]
 ```
 
 ---
@@ -105,33 +77,29 @@ Koin digunakan untuk mempermudah pengujian dan pemisahan logika platform. Modul 
 ## 🧠 Platform-Specific Features
 
 ### expect/actual Pattern
-Saya mendefinisikan "apa" (kontrak) di `commonMain` dan "bagaimana" (implementasi) di modul platform:
+Mengakses API native untuk image picker:
 
-1. **DeviceInfo**
-   - Android: Menghubungkan ke `android.os.Build` untuk mendapatkan informasi perangkat
-   - iOS: Menggunakan `UIDevice` untuk akses informasi perangkat native
+1. **ImagePicker**
+   - Android: Menggunakan `ActivityResultContracts.GetContent()`
+   - iOS: Menggunakan platform-specific image selection
 
-2. **NetworkMonitor**
-   - Android: Menggunakan `ConnectivityManager` untuk mendeteksi perubahan koneksi
-   - iOS: Menggunakan `NWPathMonitor` untuk monitoring koneksi real-time
-
-3. **Battery Status**
-   - Diimplementasikan sebagai `Flow` untuk memberikan pembaruan real-time ke UI
-   - Memungkinkan UI untuk react terhadap perubahan status baterai tanpa perlu refresh halaman
+2. **HTTP Client**
+   - Android: OkHttp engine
+   - iOS: iOSHttp engine
 
 ---
 
 ## 📸 Screenshots
 
-|       Device Info (Settings)        |           Network Offline           |            Back Online            |
-|:-----------------------------------:|:-----------------------------------:|:---------------------------------:|
-| ![Setting](Screenshot/Setting.jpeg) | ![Offline](Screenshot/Offline.jpeg) | ![Online](Screenshot/Online.jpeg) |
+|       Main Screen        |           With Image Input           |            Generated Captions            |
+|:------------------------:|:-----------------------------------:|:----------------------------------------:|
+| ![Main](Screenshot/main.jpeg) | ![Input](Screenshot/input.jpeg) | ![Result](Screenshot/result.jpeg) |
 
 ---
 
 ## 🎥 Demo Video
 
-https://github.com/user-attachments/assets/0e838d04-7b1c-48e4-9234-0a88300f6553
+https://github.com/user-attachments/assets/demo-caption-generator
 
 ---
 
@@ -140,21 +108,30 @@ https://github.com/user-attachments/assets/0e838d04-7b1c-48e4-9234-0a88300f6553
 ### Prerequisites
 - Android Studio (Arctic Fox atau lebih baru)
 - JDK 11+
-- Kotlin 1.9+
+- Kotlin 2.3+
+- Google Gemini API Key
 
 ### Steps
 1. **Clone repository**:
    ```bash
-   git clone https://github.com/15-040-GianIvander/9_123140040.git
-   cd 9_123140040
+   git clone https://github.com/15-040-GianIvander/caption-generator.git
+   cd caption-generator
    ```
 
-2. **Buka project di Android Studio**:
+2. **Setup API Key**:
+   - Dapatkan API key dari [Google AI Studio](https://makersuite.google.com/app/apikey)
+   - Untuk Android: Tambahkan ke `local.properties`:
+     ```
+     GEMINI_API_KEY=your_api_key_here
+     ```
+   - Untuk iOS: Tambahkan ke Xcode build settings
+
+3. **Buka project di Android Studio**:
    - File → Open → Pilih folder project
 
-3. **Tunggu Gradle Sync selesai**
+4. **Tunggu Gradle Sync selesai**
 
-4. **Jalankan aplikasi**:
+5. **Jalankan aplikasi**:
    - Pilih target `composeApp`
    - Pilih Android Emulator atau connect Physical Device
    - Klik Run atau tekan Shift + F10
@@ -165,11 +142,12 @@ https://github.com/user-attachments/assets/0e838d04-7b1c-48e4-9234-0a88300f6553
 
 | Komponen | Teknologi | Versi |
 |----------|-----------|-------|
-| Language | Kotlin | 1.9+ |
+| Language | Kotlin | 2.3+ |
 | Multiplatform | Kotlin Multiplatform (KMP) | Latest |
-| UI Framework | Compose Multiplatform | Latest |
-| DI Framework | Koin | Latest |
-| Database | SQLite (SQLDelight) | Latest |
+| UI Framework | Compose Multiplatform | 1.10.3 |
+| AI API | Google Gemini | gemini-2.5-flash-lite |
+| HTTP Client | Ktor | 2.3.12 |
+| Serialization | Kotlinx Serialization | 1.6.3 |
 | Async | Kotlin Coroutines | Latest |
 | Platform Target | Android & iOS | - |
 
@@ -178,23 +156,22 @@ https://github.com/user-attachments/assets/0e838d04-7b1c-48e4-9234-0a88300f6553
 ## 📂 Project Structure
 
 ```
-9_123140040/
+CaptionGenerator/
 ├── composeApp/                    # Shared UI dan platform-specific code
 │   ├── src/
 │   │   ├── commonMain/           # Shared Kotlin code
 │   │   │   ├── kotlin/
 │   │   │   │   ├── ui/          # Compose UI Components
-│   │   │   │   ├── viewmodel/   # ViewModels
-│   │   │   │   ├── repository/  # Repository Pattern
-│   │   │   │   ├── database/    # Database Layer
-│   │   │   │   └── platform/    # expect definitions
+│   │   │   │   ├── presentation/ # ViewModels & UI State
+│   │   │   │   ├── data/        # Repository & API Layer
+│   │   │   │   └── utils/       # Utilities (ImagePicker)
 │   │   │   └── resources/
 │   │   ├── androidMain/          # Android-specific implementations
 │   │   │   └── kotlin/
-│   │   │       └── platform/    # actual implementations
+│   │   │       └── com/gianivander/captiongenerator/
 │   │   └── iosMain/              # iOS-specific implementations
 │   │       └── kotlin/
-│   │           └── platform/    # actual implementations
+│   │           └── com/gianivander/captiongenerator/
 │   └── build.gradle.kts
 ├── iosApp/                        # iOS App Wrapper
 ├── gradle/
@@ -208,14 +185,14 @@ https://github.com/user-attachments/assets/0e838d04-7b1c-48e4-9234-0a88300f6553
 ## 🔄 Development Workflow
 
 ### Menambah Fitur Baru
-1. Definisikan interface di `commonMain/platform/`
-2. Implementasikan di `androidMain/platform/` dan `iosMain/platform/`
-3. Gunakan melalui Koin DI di ViewModel
+1. Definisikan interface di `commonMain/utils/`
+2. Implementasikan di `androidMain/` dan `iosMain/`
+3. Gunakan di ViewModel untuk state management
 4. Bind ke UI menggunakan Compose
 
 ### Testing
 - Unit test untuk business logic di `commonTest/`
-- Mock dependencies menggunakan Koin test module
+- Mock API responses untuk testing
 - Test platform-specific behavior di `androidTest/` dan `iosTest/`
 
 ---
@@ -231,20 +208,19 @@ https://github.com/user-attachments/assets/0e838d04-7b1c-48e4-9234-0a88300f6553
 - Pastikan memiliki Xcode 14+
 - Run `pod install` di folder `iosApp/`
 
-### Network Monitor tidak berfungsi
-- Pastikan permission sudah ditambahkan di AndroidManifest.xml:
-  ```xml
-  <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-  ```
+### Gemini API Error
+- Pastikan API key valid dan memiliki quota
+- Check network connectivity
+- Verify API key configuration in build settings
 
 ---
 
 ## 📝 Catatan Penting
 
-- Proyek ini adalah bagian dari Tugas Praktikum 8 untuk kelas Pengembangan Aplikasi Mobile RA
-- Fokus implementasi adalah pada pemahaman deep tentang Kotlin Multiplatform Architecture dan platform-specific features
+- Proyek ini mendemonstrasikan integrasi AI dalam aplikasi mobile KMP
+- Fokus pada real-world AI integration dengan clean architecture
 - Semua platform-specific logic diabstraksi menggunakan pattern expect/actual
-- DI pattern (Koin) memudahkan testing dan maintenance
+- Menggunakan production-ready practices untuk API integration
 
 ---
 
@@ -252,9 +228,9 @@ https://github.com/user-attachments/assets/0e838d04-7b1c-48e4-9234-0a88300f6553
 
 - [Kotlin Multiplatform Documentation](https://kotlinlang.org/docs/multiplatform.html)
 - [Compose Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-mobile/)
-- [Koin Dependency Injection](https://insert-koin.io/)
+- [Google Gemini API](https://ai.google.dev/docs)
+- [Ktor HTTP Client](https://ktor.io/docs/getting-started-ktor-client.html)
 - [Kotlin Coroutines](https://kotlinlang.org/docs/coroutines-overview.html)
-- [SQLDelight](https://cashapp.github.io/sqldelight/)
 
 ---
 
@@ -262,7 +238,7 @@ https://github.com/user-attachments/assets/0e838d04-7b1c-48e4-9234-0a88300f6553
 
 **Gian Ivander** - NIM: 123140040  
 GitHub: [@15-040-GianIvander](https://github.com/15-040-GianIvander)  
-Repository: [9_123140040](https://github.com/15-040-GianIvander/9_123140040)
+Repository: [caption-generator](https://github.com/15-040-GianIvander/caption-generator)
 
 ---
 
