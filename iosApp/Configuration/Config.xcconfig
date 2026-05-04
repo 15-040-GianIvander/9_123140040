@@ -1,0 +1,4 @@
+TEAM_ID=
+BUNDLE_ID=com.gianivander.captiongenerator.CaptionGenerator
+PRODUCT_NAME=CaptionGenerator
+PRODUCT_BUNDLE_IDENTIFIER=com.gianivander.captiongenerator.CaptionGenerator$(TEAM_ID)
